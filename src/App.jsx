@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import { getLatestNews } from './api/newsApi.js';
+import { getLatestNews } from './api/apitube.js';
 import NewsCard from './components/NewsCard.jsx';
 import useFavorites from './hooks/useFavorites.js';
 
@@ -263,7 +263,7 @@ export default function App() {
       <footer className="footer">
         <Brand />
         <span>Menos ruido. Más contexto.</span>
-        <span>Noticias de NewsAPI</span>
+        <span>Noticias de APITube</span>
       </footer>
     </div>
   );

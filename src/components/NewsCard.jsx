@@ -1,11 +1,11 @@
 function getSource(article) {
   if (article.author) return article.author;
-  if (!article.url) return 'NewsAPI';
+  if (!article.url) return 'APITube';
 
   try {
     return new URL(article.url).hostname.replace(/^www\./, '');
   } catch {
-    return 'NewsAPI';
+    return 'APITube';
   }
 }
 
