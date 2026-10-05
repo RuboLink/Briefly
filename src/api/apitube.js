@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getBrowserNewsLanguages } from './languages.js';
 
 const apitubeClient = axios.create({
   baseURL: '/api',
@@ -6,10 +7,11 @@ const apitubeClient = axios.create({
 });
 
 export async function getLatestNews(category, signal) {
+  const languages = getBrowserNewsLanguages();
   let data;
   try {
     const response = await apitubeClient.get('/news', {
-      params: { category, per_page: 10, language: 'es' },
+      params: { category, languages: languages.join(','), per_page: 10 },
       signal,
     });
     data = response.data;
@@ -30,13 +32,20 @@ export async function getLatestNews(category, signal) {
     throw new Error(data.message || 'La respuesta de APITube no contiene artículos.');
   }
 
-  return data.results.map((article) => ({
-    id: article.id || article.href,
-    url: article.href,
-    title: article.title,
-    description: article.description,
-    image: article.image,
-    published: article.published_at,
-    author: article.source?.domain || article.author?.name || '',
-  }));
+  const languagePriority = new Map(languages.map((language, index) => [language, index]));
+
+  return data.results
+    .map((article) => ({
+      id: article.id || article.href,
+      url: article.href,
+      title: article.title,
+      description: article.description,
+      image: article.image,
+      published: article.published_at,
+      author: article.source?.domain || article.author?.name || '',
+      language: article.language,
+    }))
+    .sort((first, second) =>
+      (languagePriority.get(first.language) ?? languages.length)
+      - (languagePriority.get(second.language) ?? languages.length));
 }
