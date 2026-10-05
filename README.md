@@ -23,4 +23,4 @@ npm run preview
 
 La aplicación ofrece las páginas **Explorar** y **Favoritos**. Los favoritos se guardan en `localStorage` bajo la clave `briefly-favorite-news-v1`; su persistencia corresponde al perfil del navegador y no a una cuenta de usuario.
 
-> APITube permite peticiones desde el navegador en cualquier origen, pero Vite incorpora la clave al cliente y queda visible en el tráfico y los archivos compilados. Para un despliegue público, utiliza una clave de prueba con restricciones o mueve las peticiones a un backend para proteger la clave.
+> Las peticiones pasan por `/api/news` para evitar el error CORS de APITube y mantener la clave fuera del navegador. En Vercel configura `__APITUBE_API_KEY__` en **Project Settings → Environment Variables** y vuelve a desplegar. En desarrollo local, la misma ruta se proxifica mediante Vite usando la clave del `.env`.

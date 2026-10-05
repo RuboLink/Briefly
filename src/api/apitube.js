@@ -1,39 +1,21 @@
 import axios from 'axios';
 
 const apitubeClient = axios.create({
-  baseURL: 'https://api.apitube.io/v1/news',
+  baseURL: '/api',
   timeout: 15000,
 });
 
-const CATEGORY_IDS = {
-  business: 'medtop:04000000',
-  technology: 'medtop:13000000',
-  science: 'medtop:13000000',
-  health: 'medtop:07000000',
-  sports: 'medtop:15000000',
-  entertainment: 'medtop:01000000',
-};
-
 export async function getLatestNews(category, signal) {
-  if (!__APITUBE_API_KEY__) {
-    throw new Error('No se ha configurado __APITUBE_API_KEY__ en el archivo .env.');
-  }
-
-  const endpoint = CATEGORY_IDS[category]
-    ? `/category/iptc_mediatopics/${CATEGORY_IDS[category]}`
-    : '/top-headlines';
-
   let data;
   try {
-    const response = await apitubeClient.get(endpoint, {
-      headers: { 'X-API-Key': __APITUBE_API_KEY__ },
-      params: { per_page: 10, language: 'es' },
+    const response = await apitubeClient.get('/news', {
+      params: { category, per_page: 10, language: 'es' },
       signal,
     });
     data = response.data;
   } catch (error) {
     if (error.response?.status === 401) {
-      throw new Error('APITube rechazó la clave (401). Comprueba que __APITUBE_API_KEY__ sea válida y esté activa.');
+      throw new Error('APITube rechazó la clave (401). Comprueba la variable __APITUBE_API_KEY__ del servidor.');
     }
     if (error.response?.status === 403) {
       throw new Error(error.response.data?.message || 'APITube no autoriza esta petición (403).');
